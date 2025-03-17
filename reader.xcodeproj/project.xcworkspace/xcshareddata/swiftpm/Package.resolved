@@ -1,0 +1,24 @@
+{
+  "originHash" : "72d5c8fe1c64c25a5195c565405624d1b95625738737a0b6fc1c24f4fe74746c",
+  "pins" : [
+    {
+      "identity" : "swiftsoup",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/scinfu/SwiftSoup",
+      "state" : {
+        "revision" : "64e4daa41b0f22affa94a6063d509c137c26909c",
+        "version" : "2.8.5"
+      }
+    },
+    {
+      "identity" : "swiftui-flow",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/tevelee/SwiftUI-Flow",
+      "state" : {
+        "revision" : "5b2f4b3373ff5ba6a8a1666d52ebfd9dc6c0e10b",
+        "version" : "3.0.1"
+      }
+    }
+  ],
+  "version" : 3
+}
