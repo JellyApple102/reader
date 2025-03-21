@@ -66,8 +66,10 @@ struct WorkCard: View {
                         } else if let group = work_stub.tags["Archive Warning:"] {
                             if group.tags.first == "Creator Chose Not To Use Archive Warnings" {
                                 Image(systemName: "exclamationmark.triangle.fill").foregroundStyle(.orange)
-                            } else {
+                            } else if group.tags.first == "No Archive Warnings Apply" {
                                 Image(systemName: "exclamationmark.triangle.fill").foregroundStyle(.placeholder)
+                            } else {
+                                Image(systemName: "exclamationmark.triangle.fill").foregroundStyle(.red)
                             }
                         }
                     }
