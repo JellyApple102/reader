@@ -93,7 +93,8 @@ class Work: Identifiable {
                         var chap = Chapter.init()
                         
                         let chapter_preface_groups = try chapter.getElementsByClass("chapter preface group")
-                        
+                       
+                        // TODO: single chapter works need to be detected and parsed differently
                         let title = try chapter_preface_groups.get(0).getElementsByClass("title").first()?.text()
                         if let title {
                             chap.title = title

@@ -99,13 +99,10 @@ struct SearchView: View {
                             .tint(.indigo)
                         }
                         .swipeActions(edge: .trailing, allowsFullSwipe: true) {
-                            Button(role: .destructive) {
+                            Button() {
                                 context.insert(stub)
                                 try? context.save()
                                 toast = Toast(system_icon: "bookmark.fill", message: "Added", color: .green)
-                                if let index = search_results.firstIndex(of: stub) {
-                                    search_results.remove(at: index)
-                                }
                             } label: {
                                 Label("Add", systemImage: "bookmark.fill")
                                     .labelStyle(.iconOnly)
