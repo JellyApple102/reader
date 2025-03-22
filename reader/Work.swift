@@ -10,10 +10,8 @@ import SwiftUI
 import SwiftData
 import SwiftSoup
 
-// TODO: almost none of these are garunteed
 struct WorkStats: Codable, Hashable {
     var published: String
-    // var updated: String
     var completed: String
     var words: String
     var chapters: String
@@ -41,9 +39,8 @@ class Work: Identifiable {
     var work_id: Int
     var title: String
     var author: String
-    // var tags: [String] // TODO: tags
     var summary: [String]
-    var notes: String
+    var notes: String // TODO: note parsing/presenting
     var chapters: [Chapter]
     var stats: WorkStats
     
@@ -85,50 +82,18 @@ class Work: Identifiable {
                     let token = try token_element.attr("content")
                     self.auth_token = token
                 }
-
-                // build chapters
-                let chapters = try doc.getElementById("chapters")?.children()
-                if let chapters {
-                    for chapter in chapters {
+                
+                let chapters = try doc.select("#chapters > div.chapter")
+                
+                // parse differently if single chapter
+                if chapters.count == 0 {
+                    if let chapter = try doc.select("#chapters").first() {
                         var chap = Chapter.init()
                         
-                        let chapter_preface_groups = try chapter.getElementsByClass("chapter preface group")
-                       
-                        // TODO: single chapter works need to be detected and parsed differently
-                        let title = try chapter_preface_groups.get(0).getElementsByClass("title").first()?.text()
-                        if let title {
-                            chap.title = title
-                        }
+                        chap.title = "Chapter 1"
                         
-                        let begin_notes_module = try chapter_preface_groups.get(0).getElementsByClass("notes module").first()
-                        if let begin_notes_module {
-                            let notes = try begin_notes_module.getElementsByClass("userstuff").first()
-                            if let notes {
-                                let notes_paragraphs = notes.children()
-                                for p in notes_paragraphs {
-                                    let md = converter.get_markdown(p: p)
-                                    chap.begin_notes.append(md)
-                                }
-                            }
-                        }
-                        
-                        if chapter_preface_groups.size() > 1 {
-                            let end_notes_module = try chapter_preface_groups.get(1).getElementsByClass("end notes module").first()
-                            if let end_notes_module {
-                                let notes = try end_notes_module.getElementsByClass("userstuff").first()
-                                if let notes {
-                                    let notes_paragraphs = notes.children()
-                                    for p in notes_paragraphs {
-                                        let md = converter.get_markdown(p: p)
-                                        chap.end_notes.append(md)
-                                    }
-                                }
-                            }
-                        }
-                        
-                        let userstuff = try chapter.getElementsByClass("userstuff module").first()
+                        let userstuff = try chapter.getElementsByClass("userstuff").first()
                         if let userstuff {
-                            try userstuff.getElementById("work")?.remove()
                             let paragraphs = userstuff.children()
                             for p in paragraphs {
                                 let md = converter.get_markdown(p: p)
@@ -138,6 +103,59 @@ class Work: Identifiable {
                         
                         self.chapters.append(chap)
                     }
+                    
+                    self.work_loaded = true
+                    return
+                }
+
+                // build chapters
+                for chapter in chapters {
+                    var chap = Chapter.init()
+                    
+                    let chapter_preface_groups = try chapter.getElementsByClass("chapter preface group")
+                   
+                    let title = try chapter_preface_groups.get(0).getElementsByClass("title").first()?.text()
+                    if let title {
+                        chap.title = title
+                    }
+                    
+                    let begin_notes_module = try chapter_preface_groups.get(0).getElementsByClass("notes module").first()
+                    if let begin_notes_module {
+                        let notes = try begin_notes_module.getElementsByClass("userstuff").first()
+                        if let notes {
+                            let notes_paragraphs = notes.children()
+                            for p in notes_paragraphs {
+                                let md = converter.get_markdown(p: p)
+                                chap.begin_notes.append(md)
+                            }
+                        }
+                    }
+                    
+                    if chapter_preface_groups.size() > 1 {
+                        let end_notes_module = try chapter_preface_groups.get(1).getElementsByClass("end notes module").first()
+                        if let end_notes_module {
+                            let notes = try end_notes_module.getElementsByClass("userstuff").first()
+                            if let notes {
+                                let notes_paragraphs = notes.children()
+                                for p in notes_paragraphs {
+                                    let md = converter.get_markdown(p: p)
+                                    chap.end_notes.append(md)
+                                }
+                            }
+                        }
+                    }
+                    
+                    let userstuff = try chapter.getElementsByClass("userstuff module").first()
+                    if let userstuff {
+                        try userstuff.getElementById("work")?.remove()
+                        let paragraphs = userstuff.children()
+                        for p in paragraphs {
+                            let md = converter.get_markdown(p: p)
+                            chap.paragraphs.append(md)
+                        }
+                    }
+                    
+                    self.chapters.append(chap)
                 }
             } catch {
                 print("url failure")
