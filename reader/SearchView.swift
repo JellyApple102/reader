@@ -13,8 +13,7 @@ struct SearchView: View {
     @State private var search_text: String = ""
     @State private var filter_search_sheet: Bool = false
     @State private var did_submit: Bool = false
-    @State private var tags_sheet = false
-    @State private var summary_sheet = false
+    @State private var preview_sheet = false
     @State private var search_results: [WorkStub] = []
     @State private var active_work_stub: WorkStub? = nil
     @State private var toast: Toast?
@@ -83,20 +82,12 @@ struct SearchView: View {
                         .swipeActions(edge: .leading) {
                             Button {
                                 active_work_stub = stub
-                                tags_sheet = true
+                                preview_sheet = true
                             } label: {
-                                Label("Tags", systemImage: "tag.fill")
+                                Label("Preview", systemImage: "tag.fill")
                                     .labelStyle(.iconOnly)
                             }
                             .tint(.blue)
-                            Button {
-                                active_work_stub = stub
-                                summary_sheet = true
-                            } label: {
-                                Label("Summary", systemImage: "list.dash")
-                                    .labelStyle(.iconOnly)
-                            }
-                            .tint(.indigo)
                         }
                         .swipeActions(edge: .trailing, allowsFullSwipe: true) {
                             Button() {
@@ -149,11 +140,8 @@ struct SearchView: View {
             } content: {
                 SearchQueryView(search_query: $search_query, showing: $filter_search_sheet, did_submit: $did_submit)
             }
-            .sheet(isPresented: $tags_sheet) {
-                TagsView(work_stub: $active_work_stub)
-            }
-            .sheet(isPresented: $summary_sheet) {
-                SummaryView(work_stub: $active_work_stub)
+            .sheet(isPresented: $preview_sheet) {
+                WorkPreview(work_stub: $active_work_stub)
             }
             .onChange(of: toast) {old, new in
                 guard let t = new else { return }

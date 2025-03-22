@@ -65,7 +65,7 @@ struct TagSearch: View {
                         }
                 }
             }
-            // .padding()
+            .padding(.top)
             
             List {
                 ForEach(search_results, id: \.self) { tag in

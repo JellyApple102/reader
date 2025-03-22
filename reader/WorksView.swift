@@ -13,8 +13,7 @@ struct WorksView: View {
     @Query(sort: \WorkStub.title) private var work_stubs: [WorkStub]
     @Environment(\.modelContext) private var context
     
-    @State private var tags_sheet = false
-    @State private var summary_sheet = false
+    @State private var preview_sheet = false
     @State private var active_work_stub: WorkStub? = nil
     @State private var show_removed = false
     @State private var toast: Toast?
@@ -35,18 +34,11 @@ struct WorksView: View {
                     .swipeActions(edge: .leading) {
                         Button {
                             active_work_stub = stub
-                            tags_sheet = true
+                            preview_sheet = true
                         } label: {
-                            Label("Tags", systemImage: "tag.fill")
+                            Label("Preview", systemImage: "tag.fill")
                         }
                         .tint(.blue)
-                        Button {
-                            active_work_stub = stub
-                            summary_sheet = true
-                        } label: {
-                            Label("Summary", systemImage: "list.dash")
-                        }
-                        .tint(.indigo)
                     }
                     .swipeActions(edge: .trailing, allowsFullSwipe: false) {
                         Button(role: .destructive) {
@@ -68,11 +60,8 @@ struct WorksView: View {
             .preference(key: ToastPreferenceKey.self, value: toast)
             .navigationTitle("Works")
             .navigationBarTitleDisplayMode(.inline)
-            .sheet(isPresented: $tags_sheet) {
-                TagsView(work_stub: $active_work_stub)
-            }
-            .sheet(isPresented: $summary_sheet) {
-                SummaryView(work_stub: $active_work_stub)
+            .sheet(isPresented: $preview_sheet) {
+                WorkPreview(work_stub: $active_work_stub)
             }
             .onChange(of: toast) {old, new in
                 guard let t = new else { return }
