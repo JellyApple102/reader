@@ -18,6 +18,31 @@ struct WorksView: View {
     @State private var show_removed = false
     @State private var toast: Toast?
     
+    func export_ids() {
+        let work_ids = work_stubs.map { String($0.work_id) }
+        let ids_str = work_ids.joined(separator: "\n")
+        UIPasteboard.general.string = ids_str
+        toast = Toast(system_icon: "square.and.arrow.up", message: "\(work_ids.count) Work Ids Copied", color: .orange)
+    }
+    
+    func import_ids() {
+        if let user_str = UIPasteboard.general.string {
+            let id_strs = user_str.split(separator: /\s+/)
+            let ids = id_strs.map { Int($0) }
+            var inserted = 0
+            for id in ids {
+                if let id {
+                    if work_stubs.filter({ $0.work_id == id }).count == 0 {
+                        let stub = WorkStub(work_id: id)
+                        context.insert(stub)
+                        inserted += 1
+                    }
+                }
+            }
+            toast = Toast(system_icon: "square.and.arrow.down", message: "\(inserted) Works Imported", color: .orange)
+        }
+    }
+    
     var body: some View {
         NavigationStack {
             List() {
@@ -62,6 +87,20 @@ struct WorksView: View {
                         .tint(.cyan)
                     }
                     .labelStyle(.iconOnly)
+                }
+            }
+            .toolbar {
+                ToolbarItem {
+                    Menu {
+                        Button(action: export_ids) {
+                            Label("Export Work Ids", systemImage: "square.and.arrow.up")
+                        }
+                        Button(action: import_ids) {
+                            Label("Import Work Ids", systemImage: "square.and.arrow.down")
+                        }
+                    } label: {
+                        Image(systemName: "ellipsis")
+                    }
                 }
             }
             .preference(key: ToastPreferenceKey.self, value: toast)
