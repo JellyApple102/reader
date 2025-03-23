@@ -26,6 +26,13 @@ struct WorksView: View {
                         destination: {
                             WorkView(stub: stub)
                                 .navigationTitle(stub.title)
+                                .toolbar {
+                                    if (stub.is_restricted) {
+                                        ToolbarItem(placement: .topBarTrailing) {
+                                            Image(systemName: "lock.fill")
+                                        }
+                                    }
+                                }
                         },
                         label: {
                             WorkCard(work_stub: stub)
@@ -79,6 +86,9 @@ struct WorksView: View {
     let stub1 = WorkStub(work_id: 61921702)
     let stub2 = WorkStub(work_id: 39945543)
     let stub3 = WorkStub(work_id: 36468745)
+    stub1.stub_loaded = true
+    stub2.stub_loaded = true
+    stub3.stub_loaded = true
     let context = container.mainContext
     context.insert(stub1)
     context.insert(stub2)

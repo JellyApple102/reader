@@ -38,7 +38,7 @@ struct ContentView: View {
                     Label("Works", systemImage: "book")
                 }
                 .tag(1)
-            Text("Account View")
+            AccountView()
                 .tabItem {
                     Label("Account", systemImage: "person.crop.circle.fill")
                 }

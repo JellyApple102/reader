@@ -75,9 +75,21 @@ struct WorkCard: View {
                     }
                     
                     VStack(alignment: .leading) {
-                        Text("\(work_stub.title)")
-                            .font(.title3)
+                        if !work_stub.is_restricted {
+                            Text(work_stub.title)
+                                .font(.title3)
+                                .fixedSize(horizontal: false, vertical: true)
+                        } else {
+                            (
+                                Text(work_stub.title)
+                                    .font(.title3)
+                                +
+                                Text(" \(Image(systemName: "lock.fill"))")
+                                    .font(.subheadline)
+                                    .baselineOffset(2)
+                            )
                             .fixedSize(horizontal: false, vertical: true)
+                        }
                         Text(work_stub.author).italic()
                     }
                     

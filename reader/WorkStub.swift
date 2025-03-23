@@ -21,6 +21,7 @@ class WorkStub {
     var title: String
     var author: String
     var rating: String
+    var is_restricted: Bool
     var tags: Dictionary<String, TagGroup>
     var summary: [String]
     var notes: String
@@ -34,6 +35,7 @@ class WorkStub {
         self.title = "\(work_id)"
         self.author = ""
         self.rating = ""
+        self.is_restricted = false
         self.tags = [:]
         self.summary = []
         self.notes = ""
@@ -60,7 +62,6 @@ class WorkStub {
             
             let converter = HtmlConverter()
             do {
-                // let html = try String(contentsOf: url, encoding: .utf8)
                 let html = contents
                 let doc: Document = try SwiftSoup.parse(html)
                 
@@ -70,6 +71,11 @@ class WorkStub {
                     let title = try preface_group.getElementsByClass("title heading").first()?.text()
                     if let title {
                         self.title = title
+                    }
+                    
+                    let lock_img = try preface_group.select("img[title=Restricted]")
+                    if lock_img.count > 0 {
+                        self.is_restricted = true
                     }
                     
                     let author = try preface_group.getElementsByClass("byline heading").first()?.text()

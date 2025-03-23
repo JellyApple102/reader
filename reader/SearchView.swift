@@ -27,6 +27,7 @@ struct SearchView: View {
     }
     
     func perform_search(advanced: Bool = false) {
+        print("searching...")
         var url_str = ""
         
         if advanced {

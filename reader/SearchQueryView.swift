@@ -18,8 +18,12 @@ struct SearchQueryView: View {
             Form {
                 Section("Work Info") {
                     TextField("Any field:", text: $search_query.query)
+                        .textInputAutocapitalization(.never)
                     TextField("Title:", text: $search_query.title)
+                        // .textInputAutocapitalization(.never)
                     TextField("Author:", text: $search_query.creators)
+                        .textInputAutocapitalization(.never)
+                        .autocorrectionDisabled()
                     HStack {
                         Text("Date:")
                         if search_query.date_comparison == .range {
