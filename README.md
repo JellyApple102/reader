@@ -9,20 +9,25 @@ Unofficial [AO3](https://archiveofourown.org/) reader, aiming to give an iOS-nat
     - Works are loaded into memory while reading, but they do not persist between sessions
 - Native list for works display, showing relevant work info (rating, words, chapters, kudos, etc.)
 - Fully functional search interface with infinite scrolling results
+    - Includes tag search to find proper tags
 - Clean, native swipe actions to access and manage works
-    - Tags view and summary view
+    - Tags/summary view
     - Swipe to delete (if you ever have zero works when opening the app, it will populate with the 3 defaults)
 - Progress saving (opening a work will put you at your latest chapter)
 - Swipe open/close sidebar while reading to access chapter list/navigation
 - Leaving kudos is functional
-    - Currently acts as a guest only
+- Basic account login
+    - No persistence beyond AO3's own internal session tracking
+    - May have to 'reset' login periodically, especially between reading sessions
+- Restricted work support
+    - Must be logged in
 
 ## On The List
 
 - Comments support (this seems the hardest/furthest out for me)
     - Currently a handful to implement, may require request throttling and maybe some form of persistence to avoid server strain while retreiving
-- AO3 account features
-    - Bookmarks, kudos, comments, restricted works, etc.
+- More AO3 account features
+    - Bookmarks, comments, history, etc.
     - Ideally persist user info for UX, but requires safe credentials management
 - Custom themes
 - Font manipulation
