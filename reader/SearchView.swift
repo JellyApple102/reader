@@ -20,6 +20,8 @@ struct SearchView: View {
     @State private var search_query: SearchQuery
     @State private var search_page: Int = 1
     @State private var last_search_type: String = "basic"
+    @State private var results_count: Int = 0
+    @State private var loaded_count: Int = 0
     @Environment(\.modelContext) private var context
     
     init() {
@@ -58,6 +60,16 @@ struct SearchView: View {
                 let html = contents
                 let doc: Document = try SwiftSoup.parse(html)
                 
+                if let count_heading = try doc.select("h3.heading").first() {
+                    let full_count_text = try count_heading.text()
+                    if var count_text = full_count_text.components(separatedBy: .whitespaces).first {
+                        count_text = count_text.replacingOccurrences(of: ",", with: "")
+                        if let count = Int(count_text) {
+                            results_count = count
+                        }
+                    }
+                }
+                
                 let works = try doc.select("ol.work.index.group > li[role=article]")
                 for work in works {
                     var id_attr = try work.attr("id")
@@ -65,8 +77,11 @@ struct SearchView: View {
                     let work_id = Int(id_attr)!
                     let stub = WorkStub(work_id: work_id)
                     search_results.append(stub)
+                    loaded_count += 1
                 }
-                search_page += 1
+                if loaded_count < results_count {
+                    search_page += 1
+                }
             } catch {
                 print("error parsing search page")
             }
@@ -102,8 +117,9 @@ struct SearchView: View {
                             .tint(.green)
                         }
                 }
-                if search_page > 1 {
+                if loaded_count < results_count {
                     ProgressView()
+                        .frame(maxWidth: .infinity, alignment: .center)
                         .onAppear {
                             print("get next page")
                             if last_search_type == "advanced" {

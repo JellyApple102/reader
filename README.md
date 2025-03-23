@@ -2,6 +2,8 @@
 
 Unofficial [AO3](https://archiveofourown.org/) reader, aiming to give an iOS-native experience.
 
+## [Quick Demo](https://youtube.com/shorts/i2Z8VLvUEss)
+
 ## Current Functionality
 
 - Asyncronous loading of works to not iterrupt the UI
