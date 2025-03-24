@@ -17,6 +17,9 @@ struct WorksView: View {
     @State private var active_work_stub: WorkStub? = nil
     @State private var show_removed = false
     @State private var toast: Toast?
+    @State private var show_unread = true
+    @State private var show_inprogress = true
+    @State private var show_read = false
     
     func export_ids() {
         let work_ids = work_stubs.map { String($0.work_id) }
@@ -46,49 +49,50 @@ struct WorksView: View {
     var body: some View {
         NavigationStack {
             List() {
-                ForEach(work_stubs) {stub in
-                    NavigationLink(
-                        destination: {
-                            WorkView(stub: stub)
-                                .navigationTitle(stub.title)
-                                .toolbar {
-                                    if (stub.is_restricted) {
-                                        ToolbarItem(placement: .topBarTrailing) {
-                                            Image(systemName: "lock.fill")
-                                        }
-                                    }
-                                }
-                        },
-                        label: {
-                            WorkCard(work_stub: stub)
-                                .labelStyle(.titleAndIcon)
-                        })
-                    .swipeActions(edge: .leading) {
-                        Button {
-                            active_work_stub = stub
-                            preview_sheet = true
-                        } label: {
-                            Label("Preview", systemImage: "tag.fill")
+                Section(
+                    isExpanded: $show_inprogress,
+                    content: {
+                        ForEach(work_stubs.filter({ $0.user_inprogress })) {stub in
+                            WorkRow(
+                                stub: stub,
+                                active_work_stub: $active_work_stub,
+                                preview_sheet: $preview_sheet,
+                                toast: $toast
+                            )
                         }
-                        .tint(.blue)
-                    }
-                    .swipeActions(edge: .trailing, allowsFullSwipe: false) {
-                        Button(role: .destructive) {
-                            context.delete(stub)
-                            toast = Toast(system_icon: "bookmark.slash.fill", message: "Removed", color: .red)
-                        } label: {
-                            Label("Remove", systemImage: "bookmark.slash.fill")
+                    },
+                    header: { Text("In Progress") }
+                )
+                Section(
+                    isExpanded: $show_unread,
+                    content: {
+                        ForEach(work_stubs.filter({ $0.user_unread })) {stub in
+                            WorkRow(
+                                stub: stub,
+                                active_work_stub: $active_work_stub,
+                                preview_sheet: $preview_sheet,
+                                toast: $toast
+                            )
                         }
-                        Button {
-                            stub.reload()
-                        } label: {
-                            Label("Refresh", systemImage: "arrow.trianglehead.2.clockwise")
+                    },
+                    header: { Text("Unread") }
+                )
+                Section(
+                    isExpanded: $show_read,
+                    content: {
+                        ForEach(work_stubs.filter({ $0.user_read })) {stub in
+                            WorkRow(
+                                stub: stub,
+                                active_work_stub: $active_work_stub,
+                                preview_sheet: $preview_sheet,
+                                toast: $toast
+                            )
                         }
-                        .tint(.cyan)
-                    }
-                    .labelStyle(.iconOnly)
-                }
+                    },
+                    header: { Text("Read") }
+                )
             }
+            .listStyle(.sidebar)
             .toolbar {
                 ToolbarItem {
                     Menu {
@@ -126,8 +130,14 @@ struct WorksView: View {
     let stub2 = WorkStub(work_id: 39945543)
     let stub3 = WorkStub(work_id: 36468745)
     stub1.stub_loaded = true
+    stub1.user_inprogress = true
+    stub1.user_unread = false
+    
     stub2.stub_loaded = true
+    
     stub3.stub_loaded = true
+    stub3.user_read = true
+    stub3.user_unread = false
     let context = container.mainContext
     context.insert(stub1)
     context.insert(stub2)

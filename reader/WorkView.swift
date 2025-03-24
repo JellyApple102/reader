@@ -93,11 +93,22 @@ struct WorkView: View {
                                         .contentTransition(.symbolEffect(.replace))
                                         .animation(.linear, value: work.left_kudos)
                                         Spacer()
-                                        Button(action: { change_chapter(new_chapter: current_chapter + 1) }) {
-                                            Label("Next Chapter", systemImage: "chevron.right")
-                                                .labelStyle(NextButtonLabelStyle())
+                                        if current_chapter != work.chapters.count - 1 {
+                                            Button(action: { change_chapter(new_chapter: current_chapter + 1) }) {
+                                                Label("Next Chapter", systemImage: "chevron.right")
+                                                    .labelStyle(NextButtonLabelStyle())
+                                            }
+                                            .disabled(current_chapter == work.chapters.count - 1)
+                                        } else {
+                                            Button(action: {
+                                                work_stub.user_inprogress = false
+                                                work_stub.user_read = true
+                                            }) {
+                                                Label("Mark As Read", systemImage: "checkmark")
+                                                    .labelStyle(NextButtonLabelStyle())
+                                            }
+                                            .disabled(work_stub.user_read)
                                         }
-                                        .disabled(current_chapter == work.chapters.count - 1)
                                     }
                                     .padding()
                                     

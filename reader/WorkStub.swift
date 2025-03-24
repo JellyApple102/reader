@@ -29,6 +29,9 @@ class WorkStub {
     
     var stub_loaded = false
     var user_chapter: Int
+    var user_unread: Bool
+    var user_inprogress: Bool
+    var user_read: Bool
     
     init(work_id: Int) {
         self.work_id = work_id
@@ -41,6 +44,9 @@ class WorkStub {
         self.notes = ""
         self.stats = WorkStats()
         self.user_chapter = 0
+        self.user_unread = true
+        self.user_inprogress = false
+        self.user_read = false
     }
     
     func reload() {
