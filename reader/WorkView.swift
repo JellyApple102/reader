@@ -53,6 +53,7 @@ struct WorkView: View {
             if !work.work_loaded {
                 ProgressView()
                     .task {
+                        // TODO: load in background properly (like stubs)??
                         work.load_async()
                     }
             } else {
@@ -204,7 +205,7 @@ struct WorkView: View {
 
 #Preview {
     let stub = WorkStub(work_id: 36468745)
-    stub.load_async()
+    // stub.load_async()
     // let work = Work(work_id: 39945543)
     return WorkView(stub: stub)
         .toaster()

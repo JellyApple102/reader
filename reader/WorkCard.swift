@@ -10,7 +10,8 @@ import SwiftUI
 
 struct WorkCard: View {
     @State var work_stub: WorkStub
-    
+    @Environment(\.modelContext) private var context
+
     func get_rating_image() -> Image {
         switch work_stub.rating {
             case "Explicit":
@@ -31,7 +32,13 @@ struct WorkCard: View {
             ProgressView()
                 .frame(maxWidth: .infinity, alignment: .center)
                 .task {
-                    work_stub.load_async()
+                    print("loading \(work_stub.work_id)...")
+                    // create background task with own modelactor to fetch and load stub
+                    let container = context.container
+                    Task.detached {
+                        let model_actor = BackgroundActor(modelContainer: container)
+                        await model_actor.load_stub(work_id: work_stub.work_id)
+                    }
                 }
         } else {
             VStack {
