@@ -20,6 +20,14 @@ struct WorkPreview: View {
             if work_stub.stub_loaded {
                 let sorted = work_stub.tags.sorted(by: {$0.value.sort_index < $1.value.sort_index})
                 ScrollView {
+                    HStack {
+                        Text("Published: \(work_stub.stats.published)")
+                        if !work_stub.stats.updated.isEmpty {
+                            Text("Updated: \(work_stub.stats.updated)")
+                        } else if !work_stub.stats.completed.isEmpty {
+                            Text("Completed: \(work_stub.stats.completed)")
+                        }
+                    }.padding(.top)
                     DisclosureGroup("Summary", isExpanded: $show_summary) {
                         VStack(alignment: .leading) {
                             ForEach(work_stub.summary, id: \.self) {paragraph in

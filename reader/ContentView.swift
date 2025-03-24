@@ -40,7 +40,7 @@ struct ContentView: View {
                 .tag(1)
             AccountView()
                 .tabItem {
-                    Label("Account", systemImage: "person.crop.circle.fill")
+                    Label("Account", systemImage: "person.crop.circle.badge.xmark")
                 }
                 .tag(2)
         }

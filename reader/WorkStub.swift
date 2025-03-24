@@ -143,6 +143,17 @@ class WorkStub {
                         self.stats.words = try stats.select("dd.words").first()?.text() ?? ""
                         self.stats.chapters = try stats.select("dd.chapters").first()?.text() ?? ""
                         self.stats.kudos = try stats.select("dd.kudos").first()?.text() ?? ""
+                        self.stats.published = try stats.select("dd.published").first?.text() ?? ""
+                        
+                        if let status_label = try stats.select("dt.status").first {
+                            let status_type = try status_label.text()
+                            let status = try stats.select("dd.status").first()?.text() ?? ""
+                            if status_type == "Updated:" {
+                                self.stats.updated = status
+                            } else if status_type == "Completed:" {
+                                self.stats.completed = status
+                            }
+                        }
                     }
                 }
             } catch {

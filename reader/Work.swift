@@ -12,6 +12,7 @@ import SwiftSoup
 
 struct WorkStats: Codable, Hashable {
     var published: String
+    var updated: String
     var completed: String
     var words: String
     var chapters: String
@@ -22,6 +23,7 @@ struct WorkStats: Codable, Hashable {
     
     init() {
         self.published = ""
+        self.updated = ""
         self.completed = ""
         self.words = ""
         self.chapters = ""
