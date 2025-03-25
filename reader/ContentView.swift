@@ -11,6 +11,7 @@ import SwiftSoup
 
 struct ContentView: View {
     @State private var selected_tab = 1
+    @State private var logged_in: Bool = false
     
     init() {
         let tab_app = UITabBarAppearance()
@@ -38,9 +39,13 @@ struct ContentView: View {
                     Label("Works", systemImage: "book")
                 }
                 .tag(1)
-            AccountView()
+            AccountView(logged_in: $logged_in)
                 .tabItem {
-                    Label("Account", systemImage: "person.crop.circle.badge.xmark")
+                    if logged_in {
+                        Label("Account", systemImage: "person.crop.circle.badge.checkmark")
+                    } else {
+                        Label("Account", systemImage: "person.crop.circle.badge.xmark")
+                    }
                 }
                 .tag(2)
         }
@@ -56,5 +61,3 @@ struct ContentView: View {
         ], inMemory: true)
         .preferredColorScheme(.dark)
 }
-
-/*61054003*/

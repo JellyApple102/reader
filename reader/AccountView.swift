@@ -10,12 +10,52 @@ import SwiftUI
 import SwiftSoup
 
 struct AccountView: View {
-    @State var username: String = ""
-    @State var password: String = ""
-    @State var loading: Bool = false
-    @State var logged_in: Bool = false
+    @State private var username: String = ""
+    @State private var password: String = ""
+    @State private var loading: Bool = false
+    @State private var did_precheck: Bool = false
+    @Binding var logged_in: Bool
+    
+    func check() async {
+        print("login check")
+        loading = true
+        let url_str = "https://archiveofourown.org/users/login"
+        let url = URL(string: url_str)!
+        
+        do {
+            // get auth token from login page
+            let (data, response) = try await URLSession.shared.data(from: url)
+            let status = (response as! HTTPURLResponse).statusCode
+            
+            if (200...299).contains(status) {
+            } else if status == 429 {
+                print("login page: too many requests")
+                loading = false
+                return
+            } else {
+                print("login page: other status")
+                loading = false
+                return
+            }
+            guard let contents = String(data: data, encoding: .utf8) else { loading = false; return }
+            let doc: Document = try SwiftSoup.parse(contents)
+            
+            let logged = try doc.select("body.logged-in")
+            if logged.count > 0 {
+                logged_in = true
+            } else {
+                logged_in = false
+            }
+            username = ""
+            password = ""
+            loading = false
+        } catch {
+            print(error)
+        }
+    }
     
     func login() async {
+        loading = true
         let url_str = "https://archiveofourown.org/users/login"
         let url = URL(string: url_str)!
         var auth_token = ""
@@ -28,12 +68,14 @@ struct AccountView: View {
             if (200...299).contains(status) {
             } else if status == 429 {
                 print("login page: too many requests")
+                loading = false
                 return
             } else {
                 print("login page: other status")
+                loading = false
                 return
             }
-            guard let contents = String(data: data, encoding: .utf8) else { return }
+            guard let contents = String(data: data, encoding: .utf8) else { loading = false; return }
             let doc: Document = try SwiftSoup.parse(contents)
             
             if let token_element = try doc.select("meta[name=csrf-token]").first() {
@@ -54,10 +96,8 @@ struct AccountView: View {
             req.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
             
             URLSession.shared.dataTask(with: req) { data, response, error in
-                // let res = (response as! HTTPURLResponse)
-                // let status = res.statusCode
-                guard let loaded_data = data else { return }
-                guard let contents = String(data: loaded_data, encoding: .utf8) else { return }
+                guard let loaded_data = data else { loading = false; return }
+                guard let contents = String(data: loaded_data, encoding: .utf8) else { loading = false; return }
                 do {
                     let doc: Document = try SwiftSoup.parse(contents)
                     let logged = try doc.select("body.logged-in")
@@ -69,6 +109,7 @@ struct AccountView: View {
                 } catch {
                     print(error)
                 }
+                loading = false
             }
             .resume()
         } catch {
@@ -81,11 +122,13 @@ struct AccountView: View {
             VStack {
                 if !logged_in {
                     if !loading {
-                        Form {
+                        GroupBox {
                             TextField("Username:", text: $username)
+                                .textFieldStyle(.roundedBorder)
                                 .textInputAutocapitalization(.never)
                                 .autocorrectionDisabled()
                             SecureField("Password:", text: $password)
+                                .textFieldStyle(.roundedBorder)
                                 .textInputAutocapitalization(.never)
                                 .autocorrectionDisabled()
                             Button("Log In") {
@@ -94,27 +137,51 @@ struct AccountView: View {
                                     await login()
                                 }
                             }
+                        } label: {
+                            Label("Log In", systemImage: "person.crop.circle")
                         }
+                        .padding()
                     } else {
-                        ProgressView()
+                        GroupBox {
+                            ProgressView()
+                                .padding()
+                        } label: {
+                            Label("Log In", systemImage: "person.crop.circle")
+                        }
+                        .padding()
                     }
                 } else {
-                    Text("logged in!")
-                        .padding()
-                    Button("reset") {
-                        loading = false
-                        logged_in = false
+                    GroupBox {
+                        Text("Logged In!")
+                            .padding()
+                        Button("Log Out") {
+                            Task {
+                                await URLSession.shared.reset()
+                                await check()
+                            }
+                        }
+                    } label: {
+                        Label("Log In", systemImage: "person.crop.circle")
                     }
                     .padding()
                 }
             }
             .navigationTitle("Account")
             .navigationBarTitleDisplayMode(.inline)
+            .task {
+                // want to check if session is still 'active', but only the first time
+                // TODO: find clean way to move this check to app startup
+                if !did_precheck {
+                    await check()
+                    did_precheck = true
+                }
+            }
         }
     }
 }
 
 #Preview {
-    AccountView()
+    @Previewable @State var logged_in = false
+    AccountView(logged_in: $logged_in)
         .preferredColorScheme(.dark)
 }
