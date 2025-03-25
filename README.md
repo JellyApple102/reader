@@ -25,6 +25,9 @@ Unofficial [AO3](https://archiveofourown.org/) reader, aiming to give an iOS-nat
     - May have to 'reset' login periodically
 - Restricted work support
     - Must be logged in
+- Import/export by work Id
+    - Export ids to clipboard, separated by newlines
+    - Import ids from clipboard, saparated by any whitespace
 
 ## On The List
 
@@ -33,7 +36,7 @@ Unofficial [AO3](https://archiveofourown.org/) reader, aiming to give an iOS-nat
 - More AO3 account features
     - Bookmarks, comments, history, etc.
     - Ideally persist user info for UX, but requires safe credentials management
-- Custom themes
+- Custom themes (the whole app is hardcoded to the default iOS dark theme)
 - Font manipulation
 - App Store release? (see [notes](#extra-notes))
 
@@ -45,6 +48,9 @@ Unofficial [AO3](https://archiveofourown.org/) reader, aiming to give an iOS-nat
     - For 'flow' style layouts, used in tag display view
     
 ## Development Notes
+
+If you are compiling/installing yourself, you probably need to set the projects, bundle identifier and development team. I have these settings read
+from a `project.xcconfig` file that is not tracked by Git because they have my last name in them.
 
 Changes to the `SwiftData` `@Model`s may require a clean install, there is no schema/migration strategy in place while I'm ironing things out.
 
