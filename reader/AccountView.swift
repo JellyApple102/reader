@@ -17,7 +17,6 @@ struct AccountView: View {
     @Binding var logged_in: Bool
     
     func check() async {
-        print("login check")
         loading = true
         let url_str = "https://archiveofourown.org/users/login"
         let url = URL(string: url_str)!
