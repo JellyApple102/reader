@@ -10,6 +10,7 @@ import SwiftUI
 
 struct WorkCard: View {
     @State var work_stub: WorkStub
+    @State var search_mode: Bool = false
     @Environment(\.modelContext) private var context
 
     func get_rating_image() -> Image {
@@ -32,12 +33,15 @@ struct WorkCard: View {
             ProgressView()
                 .frame(maxWidth: .infinity, alignment: .center)
                 .task {
-                    print("loading \(work_stub.work_id)...")
-                    // create background task with own modelactor to fetch and load stub
-                    let container = context.container
-                    Task.detached {
-                        let model_actor = BackgroundActor(modelContainer: container)
-                        await model_actor.load_stub(work_id: work_stub.work_id)
+                    if search_mode {
+                        await work_stub.load_for_search()
+                    } else {
+                        // create background task with own modelactor to fetch and load stub
+                        let container = context.container
+                        Task.detached {
+                            let model_actor = BackgroundActor(modelContainer: container)
+                            await model_actor.load_stub(work_id: work_stub.work_id)
+                        }
                     }
                 }
         } else {

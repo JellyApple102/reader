@@ -93,7 +93,7 @@ struct SearchView: View {
         NavigationStack {
             List {
                 ForEach(search_results) {stub in
-                    WorkCard(work_stub: stub)
+                    WorkCard(work_stub: stub, search_mode: true)
                         .labelStyle(.titleAndIcon)
                         .swipeActions(edge: .leading) {
                             Button {
