@@ -8,19 +8,21 @@ Unofficial [AO3](https://archiveofourown.org/) reader, aiming to give an iOS-nat
 
 - Asyncronous loading of works to not iterrupt the UI
 - Basic work information (title, author, tags, stats, etc.) stored on disk for faster experience
-    - Works are loaded into memory while reading, but they do not persist between sessions
+    - Works are loaded into memory while reading, but they do not persist between app launches
 - Native list for works display, showing relevant work info (rating, words, chapters, kudos, etc.)
 - Fully functional search interface with infinite scrolling results
     - Includes tag search to find proper tags
 - Clean, native swipe actions to access and manage works
     - Tags/summary view
     - Swipe to delete (if you ever have zero works when opening the app, it will populate with the 3 defaults)
-- Progress saving (opening a work will put you at your latest chapter)
+- Progress saving
+    - Works remember your last opened chapter
+    - Manage unread/in progress/read status
 - Swipe open/close sidebar while reading to access chapter list/navigation
-- Leaving kudos is functional
+- Kudos funcionality
 - Basic account login
     - No persistence beyond AO3's own internal session tracking
-    - May have to 'reset' login periodically, especially between reading sessions
+    - May have to 'reset' login periodically
 - Restricted work support
     - Must be logged in
 
