@@ -101,13 +101,12 @@ struct WorkView: View {
                                             .disabled(current_chapter == work.chapters.count - 1)
                                         } else {
                                             Button(action: {
-                                                work_stub.user_inprogress = false
-                                                work_stub.user_read = true
+                                                work_stub.user_progress = .read
                                             }) {
                                                 Label("Mark As Read", systemImage: "checkmark")
                                                     .labelStyle(NextButtonLabelStyle())
                                             }
-                                            .disabled(work_stub.user_read)
+                                            .disabled(work_stub.user_progress == .read)
                                         }
                                     }
                                     .padding()

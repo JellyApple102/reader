@@ -17,51 +17,46 @@ struct WorkRow: View {
     
     @ViewBuilder
     func user_status_actions() -> some View {
-        if stub.user_unread {
-            Button {
-                stub.user_unread = false
-                stub.user_inprogress = true
-            } label: {
-                Label("Mark In Progress", systemImage: "book.fill")
-            }
-            .tint(.indigo)
-            Button {
-                stub.user_unread = false
-                stub.user_read = true
-            } label: {
-                Label("Mark Read", systemImage: "checkmark")
-            }
-            .tint(.purple)
-        } else if stub.user_inprogress {
-            Button {
-                stub.user_inprogress = false
-                stub.user_unread = true
-            } label: {
-                Label("Mark Unread", systemImage: "xmark")
-            }
-            .tint(.indigo)
-            Button {
-                stub.user_inprogress = false
-                stub.user_read = true
-            } label: {
-                Label("Mark Read", systemImage: "checkmark")
-            }
-            .tint(.purple)
-        } else if stub.user_read {
-            Button {
-                stub.user_read = false
-                stub.user_unread = true
-            } label: {
-                Label("Mark Unread", systemImage: "xmark")
-            }
-            .tint(.indigo)
-            Button {
-                stub.user_read = false
-                stub.user_inprogress = true
-            } label: {
-                Label("Mark In Progress", systemImage: "book.fill")
-            }
-            .tint(.purple)
+        switch stub.user_progress {
+            case .unread:
+                Button {
+                    stub.user_progress = .in_progress
+                } label: {
+                    Label("Mark In Progress", systemImage: "book.fill")
+                }
+                .tint(.indigo)
+                Button {
+                    stub.user_progress = .read
+                } label: {
+                    Label("Mark Read", systemImage: "checkmark")
+                }
+                .tint(.purple)
+            case .in_progress:
+                Button {
+                    stub.user_progress = .unread
+                } label: {
+                    Label("Mark Unread", systemImage: "xmark")
+                }
+                .tint(.indigo)
+                Button {
+                    stub.user_progress = .read
+                } label: {
+                    Label("Mark Read", systemImage: "checkmark")
+                }
+                .tint(.purple)
+            case .read:
+                Button {
+                    stub.user_progress = .unread
+                } label: {
+                    Label("Mark Unread", systemImage: "xmark")
+                }
+                .tint(.indigo)
+                Button {
+                    stub.user_progress = .in_progress
+                } label: {
+                    Label("Mark In Progress", systemImage: "book.fill")
+                }
+                .tint(.purple)
         }
     }
     
@@ -78,9 +73,8 @@ struct WorkRow: View {
                         }
                     }
                     .onAppear {
-                        if stub.user_unread {
-                            stub.user_unread = false
-                            stub.user_inprogress = true
+                        if stub.user_progress == .unread {
+                            stub.user_progress = .in_progress
                         }
                     }
             },

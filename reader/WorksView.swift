@@ -52,7 +52,7 @@ struct WorksView: View {
                 Section(
                     isExpanded: $show_inprogress,
                     content: {
-                        ForEach(work_stubs.filter({ $0.user_inprogress })) {stub in
+                        ForEach(work_stubs.filter({ $0.user_progress == .in_progress })) {stub in
                             WorkRow(
                                 stub: stub,
                                 active_work_stub: $active_work_stub,
@@ -66,7 +66,7 @@ struct WorksView: View {
                 Section(
                     isExpanded: $show_unread,
                     content: {
-                        ForEach(work_stubs.filter({ $0.user_unread })) {stub in
+                        ForEach(work_stubs.filter({ $0.user_progress == .unread })) {stub in
                             WorkRow(
                                 stub: stub,
                                 active_work_stub: $active_work_stub,
@@ -80,7 +80,7 @@ struct WorksView: View {
                 Section(
                     isExpanded: $show_read,
                     content: {
-                        ForEach(work_stubs.filter({ $0.user_read })) {stub in
+                        ForEach(work_stubs.filter({ $0.user_progress == .read })) {stub in
                             WorkRow(
                                 stub: stub,
                                 active_work_stub: $active_work_stub,
@@ -130,14 +130,13 @@ struct WorksView: View {
     let stub2 = WorkStub(work_id: 39945543)
     let stub3 = WorkStub(work_id: 36468745)
     stub1.stub_loaded = true
-    stub1.user_inprogress = true
-    stub1.user_unread = false
+    stub1.user_progress = .in_progress
     
     stub2.stub_loaded = true
     
     stub3.stub_loaded = true
-    stub3.user_read = true
-    stub3.user_unread = false
+    stub3.user_progress = .read
+    
     let context = container.mainContext
     context.insert(stub1)
     context.insert(stub2)

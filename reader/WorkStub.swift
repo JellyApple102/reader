@@ -10,6 +10,10 @@ import Foundation
 import SwiftData
 import SwiftSoup
 
+enum UserProgress: Codable, Hashable {
+    case unread, in_progress, read
+}
+
 struct TagGroup: Codable, Hashable {
     let sort_index: Int
     var tags: [String]
@@ -29,9 +33,7 @@ class WorkStub {
     
     var stub_loaded = false
     var user_chapter: Int
-    var user_unread: Bool
-    var user_inprogress: Bool
-    var user_read: Bool
+    var user_progress: UserProgress
     
     init(work_id: Int) {
         self.work_id = work_id
@@ -44,9 +46,7 @@ class WorkStub {
         self.notes = ""
         self.stats = WorkStats()
         self.user_chapter = 0
-        self.user_unread = true
-        self.user_inprogress = false
-        self.user_read = false
+        self.user_progress = .unread
     }
     
     func reload() {
