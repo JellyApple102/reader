@@ -131,8 +131,7 @@ struct SearchQuery {
         
         switch complete {
             case .all:
-                // do nothing
-                print("default completion status")
+                break
             case .complete:
                 queries.append("work_search[complete]=T")
             case .in_progress:
@@ -141,8 +140,7 @@ struct SearchQuery {
         
         switch crossover {
             case .include:
-                // do nothing
-                print("default crossover")
+                break
             case .exclude:
                 queries.append("work_search[crossover]=F")
             case .only:
@@ -178,7 +176,7 @@ struct SearchQuery {
         
         switch rating {
             case .all:
-                print("all ratings")
+                break
             case .not_rated:
                 queries.append("work_search[rating_ids]=9")
             case .general:

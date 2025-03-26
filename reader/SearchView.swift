@@ -22,6 +22,7 @@ struct SearchView: View {
     @State private var last_search_type: String = "basic"
     @State private var results_count: Int = 0
     @State private var loaded_count: Int = 0
+    @State private var loading: Bool = false
     @Environment(\.modelContext) private var context
     
     init() {
@@ -29,7 +30,7 @@ struct SearchView: View {
     }
     
     func perform_search(advanced: Bool = false) {
-        print("searching...")
+        loading = true
         var url_str = ""
         
         if advanced {
@@ -44,15 +45,17 @@ struct SearchView: View {
         
         URLSession.shared.dataTask(with: url) {data, response, error in
             guard let loaded_data = data else { return }
-            guard let contents = String(data: loaded_data, encoding: .utf8) else { return }
+            guard let contents = String(data: loaded_data, encoding: .utf8) else { loading = false; return }
             let status = (response as! HTTPURLResponse).statusCode
             
             if (200...299).contains(status) {
             } else if status == 429 {
                 print("search: too many requests")
+                loading = false
                 return
             } else {
                 print("search: other status")
+                loading = false
                 return
             }
             
@@ -83,8 +86,11 @@ struct SearchView: View {
                     search_page += 1
                 }
             } catch {
+                loading = false
                 print("error parsing search page")
             }
+            
+            loading = false
         }
         .resume()
     }
@@ -111,7 +117,7 @@ struct SearchView: View {
                             .tint(.green)
                         }
                 }
-                if loaded_count < results_count {
+                if !loading && loaded_count < results_count {
                     ProgressView()
                         .frame(maxWidth: .infinity, alignment: .center)
                         .onAppear {
