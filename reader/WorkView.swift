@@ -19,7 +19,7 @@ struct NextButtonLabelStyle: LabelStyle {
 }
 
 struct WorkView: View {
-    @State var work: Work?
+    @State private var work: Work?
     @Query private var all_works: [Work]
     @Environment(\.modelContext) private var context
     var work_stub: WorkStub
@@ -27,13 +27,18 @@ struct WorkView: View {
     let sidebar_width: CGFloat = 250
     var chapter_view_id = UUID()
     
+    let font_sizes: [CGFloat] = [10, 12, 14, 16, 18, 20, 22, 24, 26, 28]
+    
     // internal state
     @State private var offset: CGFloat = 0
     @State private var percent: CGFloat = 0
     @State private var last_offset: CGFloat = 0
     @State private var current_chapter: Int
     @State private var toast: Toast?
-    
+    @State private var show_controls: Bool = true
+    @State private var show_chapters: Bool = true
+    @State private var size_index: Double = 4.0
+
     // Pass bindings to these to ChapterView
     @State var begin_notes_open = false
     @State var end_notes_open = false
@@ -69,9 +74,9 @@ struct WorkView: View {
                                         begin_notes_open: $begin_notes_open,
                                         end_notes_open: $end_notes_open
                                     )
+                                    .font(.system(size: font_sizes[Int(size_index)]))
                                     .id(chapter_view_id)
                                     
-                                    // TODO: extras (kudos functionality, comments)
                                     Divider().padding(.horizontal)
                                     
                                     HStack {
@@ -148,9 +153,30 @@ struct WorkView: View {
                                 }
                             }
                         
-                        // Sidebar list with chapters
+                        // Sidebar
                         List() {
-                            Section(header: Text("Chapters")) {
+                            // controls section
+                            Section(isExpanded: $show_controls) {
+                                VStack(alignment: .leading) {
+                                    Text("Font Size: \(Int(font_sizes[Int(size_index)]))")
+                                    Slider(value: $size_index, in: 0.0...Double(font_sizes.count - 1), step: 1) {
+                                        Text("Font Size: \(font_sizes[Int(size_index)])")
+                                    } minimumValueLabel: {
+                                        Text("\(Int(font_sizes[0]))")
+                                            .font(.caption)
+                                            .fontWeight(.thin)
+                                    } maximumValueLabel: {
+                                        Text("\(Int(font_sizes[font_sizes.count - 1]))")
+                                            .font(.caption)
+                                            .fontWeight(.thin)
+                                    }
+                                }
+                            } header: {
+                                Text("Controls")
+                            }
+                            
+                            // Chapters list section
+                            Section(isExpanded: $show_chapters) {
                                 ForEach(Array(work.chapters.enumerated()), id: \.offset) {i, chapter in
                                     Text(chapter.title)
                                         .onTapGesture {
@@ -165,6 +191,8 @@ struct WorkView: View {
                                             }
                                         }
                                 }
+                            } header: {
+                                Text("Chapters")
                             }
                         }
                         .listStyle(.sidebar)
