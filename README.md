@@ -2,7 +2,7 @@
 
 Unofficial [AO3](https://archiveofourown.org/) reader, aiming to give an iOS-native experience.
 
-## [Quick Demo](https://youtube.com/shorts/i2Z8VLvUEss)
+## [Quick Demo](https://www.youtube.com/watch?v=fjGoLQPbe7A)
 
 ## Current Functionality
 
