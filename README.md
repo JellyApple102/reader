@@ -28,16 +28,17 @@ Unofficial [AO3](https://archiveofourown.org/) reader, aiming to give an iOS-nat
 - Import/export by work Id
     - Export ids to clipboard, separated by newlines
     - Import ids from clipboard, saparated by any whitespace
+- Adjustable font size
 
 ## On The List
 
 - Comments support (this seems the hardest/furthest out for me)
-    - Currently a handful to implement, may require request throttling and maybe some form of persistence to avoid server strain while retreiving
+    - May require request throttling and maybe some form of persistence to avoid server strain while retreiving
 - More AO3 account features
     - Bookmarks, comments, history, etc.
-    - Ideally persist user info for UX, but requires safe credentials management
+    - Ideally persist user info for UX, but requires safe credentials management so ??
 - Custom themes (the whole app is hardcoded to the default iOS dark theme)
-- Font manipulation
+- Alternate font choices
 - App Store release? (see [notes](#extra-notes))
 
 ## Direct Dependencies
