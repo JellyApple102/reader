@@ -95,15 +95,9 @@ struct SearchView: View {
                 ForEach(search_results) {stub in
                     WorkCard(work_stub: stub, search_mode: true)
                         .labelStyle(.titleAndIcon)
-                        .swipeActions(edge: .leading) {
-                            Button {
-                                active_work_stub = stub
-                                preview_sheet = true
-                            } label: {
-                                Label("Preview", systemImage: "tag.fill")
-                                    .labelStyle(.iconOnly)
-                            }
-                            .tint(.blue)
+                        .onTapGesture {
+                            active_work_stub = stub
+                            preview_sheet = true
                         }
                         .swipeActions(edge: .trailing, allowsFullSwipe: true) {
                             Button() {
