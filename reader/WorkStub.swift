@@ -95,6 +95,7 @@ class WorkStub {
                 if let summary_module {
                     let summary = try summary_module.getElementsByClass("userstuff").first()
                     if let summary {
+                        self.summary = []
                         let summary_paragraphs = summary.children()
                         for p in summary_paragraphs {
                             let md = converter.get_markdown(p: p)
@@ -231,6 +232,7 @@ actor BackgroundActor {
                     if let summary_module {
                         let summary = try summary_module.getElementsByClass("userstuff").first()
                         if let summary {
+                            stub.summary = []
                             let summary_paragraphs = summary.children()
                             for p in summary_paragraphs {
                                 let md = converter.get_markdown(p: p)
