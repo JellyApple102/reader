@@ -14,6 +14,7 @@ struct WorkPreview: View {
     @Binding var work_stub: WorkStub?
     @State var show_summary: Bool = true
     @State var show_tags: Bool = true
+    @State var series_sheet: Bool = false
     
     var body: some View {
         if let work_stub {
@@ -52,8 +53,21 @@ struct WorkPreview: View {
                                     }
                                 }
                             }
+                            
+                            if let series = work_stub.series {
+                                Text("Series:").foregroundStyle(.secondary)
+                                HStack {
+                                    Text(series.prefix)
+                                    Button(series.name) {
+                                        series_sheet = true
+                                    }
+                                }
+                            }
                         }.padding()
                     }.padding([.horizontal, .bottom])
+                }
+                .sheet(isPresented: $series_sheet) {
+                    SeriesView(series_id: work_stub.series!.series_id, series_title: work_stub.series!.name)
                 }
             }
         } else {

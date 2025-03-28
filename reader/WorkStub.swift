@@ -19,6 +19,12 @@ struct TagGroup: Codable, Hashable {
     var tags: [String]
 }
 
+struct Series: Codable, Hashable {
+    let prefix: String
+    let name: String
+    let series_id: Int
+}
+
 @Model
 class WorkStub {
     @Attribute(.unique) var work_id: Int
@@ -27,6 +33,7 @@ class WorkStub {
     var rating: String
     var is_restricted: Bool
     var tags: Dictionary<String, TagGroup>
+    var series: Series?
     var summary: [String]
     var notes: String
     var stats: WorkStats
@@ -112,6 +119,26 @@ class WorkStub {
                     self.rating = try rating_tag.text()
                 }
                 
+                if let series_group = try metadata.select("dd.series").first() {
+                    var series_part = ""
+                    var series_name = ""
+                    var series_id = -1
+                    if let pos = try series_group.select("span.position").first() {
+                        let full_str = try pos.text()
+                        let regex = /^Part\s+\d+\s+of\s+/
+                        let range = full_str.firstRange(of: regex)!
+                        
+                        series_part = String(full_str[range.lowerBound..<range.upperBound]).trimmingCharacters(in: .whitespaces)
+                        series_name = String(full_str[range.upperBound...]).trimmingCharacters(in: .whitespaces)
+                    }
+                    if let series_tag = try series_group.select("span.position > a").first() {
+                        var series_href = try series_tag.attr("href")
+                        series_href.trimPrefix("/series/")
+                        series_id = Int(series_href)!
+                    }
+                    self.series = Series(prefix: series_part, name: series_name, series_id: series_id)
+                }
+
                 // build tags dictionary
                 let exclude_groups = [/*"rating tags",*/ "series", "language", "collections", "stats"] // either done seperatly, weird formatting, or TODO: do this
                 let group_names = try metadata.select("> dt")
@@ -226,6 +253,26 @@ actor BackgroundActor {
                     if let rating_tag {
                         // print(try rating_tag.outerHtml())
                         stub.rating = try rating_tag.text()
+                    }
+                    
+                    if let series_group = try metadata.select("dd.series").first() {
+                        var series_part = ""
+                        var series_name = ""
+                        var series_id = -1
+                        if let pos = try series_group.select("span.position").first() {
+                            let full_str = try pos.text()
+                            let regex = /^Part\s+\d+\s+of\s+/
+                            let range = full_str.firstRange(of: regex)!
+                            
+                            series_part = String(full_str[range.lowerBound..<range.upperBound]).trimmingCharacters(in: .whitespaces)
+                            series_name = String(full_str[range.upperBound...]).trimmingCharacters(in: .whitespaces)
+                        }
+                        if let series_tag = try series_group.select("span.position > a").first() {
+                            var series_href = try series_tag.attr("href")
+                            series_href.trimPrefix("/series/")
+                            series_id = Int(series_href)!
+                        }
+                        stub.series = Series(prefix: series_part, name: series_name, series_id: series_id)
                     }
                     
                     // build tags dictionary

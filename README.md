@@ -29,6 +29,9 @@ Unofficial [AO3](https://archiveofourown.org/) reader, aiming to give an iOS-nat
     - Export ids to clipboard, separated by newlines
     - Import ids from clipboard, saparated by any whitespace
 - Adjustable font size
+- Series support
+    - Can view the series a work is a part of from the preview sheet
+    - Can add works from the series to your list from the series view
 
 ## On The List
 

@@ -126,21 +126,29 @@ struct WorksView: View {
 
 #Preview {
     let container = try! ModelContainer(for: WorkStub.self, Work.self, configurations: ModelConfiguration(isStoredInMemoryOnly: true), ModelConfiguration(isStoredInMemoryOnly: true))
+    let context = container.mainContext
+    
+    /*
     let stub1 = WorkStub(work_id: 61921702)
-    let stub2 = WorkStub(work_id: 39945543)
-    let stub3 = WorkStub(work_id: 36468745)
     stub1.stub_loaded = true
     stub1.user_progress = .in_progress
-    
-    stub2.stub_loaded = true
-    
+    context.insert(stub1)
+     */
+
+    let stub2 = WorkStub(work_id: 39945543)
+    // stub2.stub_loaded = true
+    context.insert(stub2)
+
+    /*
+    let stub3 = WorkStub(work_id: 36468745)
     stub3.stub_loaded = true
     stub3.user_progress = .read
-    
-    let context = container.mainContext
-    context.insert(stub1)
-    context.insert(stub2)
     context.insert(stub3)
+     */
+
+    let stub4 = WorkStub(work_id: 64079383)
+    // stub4.stub_loaded = true
+    context.insert(stub4)
 
     return WorksView()
         .toaster()

@@ -38,7 +38,7 @@ struct WorkCard: View {
                     } else {
                         // create background task with own modelactor to fetch and load stub
                         let container = context.container
-                        Task(priority: .high) {
+                        Task.detached(priority: .high) {
                             let model_actor = BackgroundActor(modelContainer: container)
                             await model_actor.load_stub(work_id: work_stub.work_id)
                         }
